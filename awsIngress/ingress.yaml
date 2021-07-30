@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ratel
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+spec:
+  rules:
+    - host: ratel.dev-app.snglr.com
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: dgraph-dgraph-ratel
+              servicePort: 80
+    - host: alpha.dev-app.snglr.com
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: dgraph-dgraph-alpha
+              servicePort: 8080
+    - host: zero.dev-app.snglr.com
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: dgraph-dgraph-zero
+              servicePort: 6080
