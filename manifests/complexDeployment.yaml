@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+spec:
+  selector:
+    matchLabels:
+      app: web-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+      - name: web-app
+        image: vladmasarik/origin-webapp:latest
+        ports:
+        - containerPort: 443
+          name: web-app
+        resources:
+          limits:
+            cpu: 500m
+            memory: 6Gi
+          requests:
+            cpu: 500m
+            memory: 3Gi
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 443
+            httpHeaders: # Needed because Django does not allow IP hosts, and if I try to set an IP range there is no nice solution https://code.djangoproject.com/ticket/27485
+              - name: Host
+                value: "www.beelivingsensor.eu"
+          initialDelaySeconds: 240
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 443
+            httpHeaders: # Needed because Django does not allow IP hosts, and if I try to set an IP range there is no nice solution https://code.djangoproject.com/ticket/27485
+              - name: Host
+                value: "www.beelivingsensor.eu"
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        env: 
+        - name: DEV_ENV
+          value: "False"
+        - name: DJANGO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: prod-secret
+              key: DJANGO_SECRET_KEY
