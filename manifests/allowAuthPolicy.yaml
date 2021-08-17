@@ -1,0 +1,11 @@
+# Just allow any in/out communication in the "snglr-model-checker" namespace; This is so that we dont deny requests for Keycloak ie. the "authenticate.dev-snglr.com"
+
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-all
+  namespace: feature-add-authpolicy
+spec:
+  action: ALLOW
+  rules:
+  - {}

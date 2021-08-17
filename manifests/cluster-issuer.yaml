@@ -1,0 +1,45 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+  namespace: feature-instio-gw
+spec:
+  acme:
+    # The ACME server URL
+    # Staging env: https://acme-staging-v02.api.letsencrypt.org/directory
+    # Production env: https://acme-v02.api.letsencrypt.org/directory
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    # Email address used for ACME registration
+    email: vm@snglr.com
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: cluster-certificates-cert-manager
+    # Enable the HTTP-01 challenge provider
+    solvers:
+    - selector: {}
+      dns01:
+        route53:
+          accessKeyID: AKIA2565A47OYKLNVUF2
+          region: "us-east-1"
+          hostedZoneID: Z08763003C6WLUGVFL9P5 # The shit of the zone ID, the ID of the main domain name in the DNS entries
+          secretAccessKeySecretRef:
+            key: "key"
+            name: aws-cert-secret # Secret where the AWS secret key is stored
+
+
+---
+
+# Once you have the issuer, you should also create a certificate. If you are using the DNS01 resolver to prove who you are, you need this.
+# If you were using the HTTP01 solver, then you would get a certificate when you create an ingress.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-cert
+  namespace: cert-manager
+spec:
+  secretName: wildcard-cert-secret # Secret where the certificates will be stored
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  dnsNames:
+  - health-vse.dev-snglr.com

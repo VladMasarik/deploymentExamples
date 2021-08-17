@@ -1,0 +1,41 @@
+# This redirects all the traffic to the oauth2-proxy, which maintains the JWT token in a
+# session cookie.
+
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: health-exclude
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      app: istio-ingressgateway
+  configPatches:
+  # - applyTo: NETWORK_FILTER # ths thing allows/forwards user request address
+  #   match:
+  #     context: ANY
+  #     listener:
+  #       filterChain:
+  #         filter:
+  #           name: "envoy.filters.network.http_connection_manager"
+  #   patch:
+  #     operation: MERGE
+  #     value:
+  #       typed_config:
+  #         "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager"
+  #         use_remote_address: true
+  #         xff_num_trusted_hops: 10
+  - applyTo: HTTP_ROUTE # this thing removes a certain subdomain from authentication.
+    match:
+      routeConfiguration:
+        vhost:
+          name: health.dev-app.snglr.com:80
+    patch:
+      operation: MERGE
+      value:
+        name: envoy.ext_authz_disabled
+        typed_per_filter_config:
+          envoy.ext_authz:
+            "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
+            disabled: true
+  priority: -10

@@ -1,0 +1,27 @@
+# To deploy any other new app, just specify a virtual service.
+# Especially the hostname that you would like to use, and to which Kubernetes service it should be redirected.
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: health
+  namespace: feature-add-authpolicy
+spec:
+  hosts:
+  - health.dev-app.snglr.com
+  gateways:
+  - default/qualifier-gateway
+  http:
+  - route:
+    - destination:
+        host: health
+        port:
+          number: 8080
+    # headers:
+    #   request:
+    #     add:
+    #       x-forwarded-proto: "https"
+    #       x-forwarded-for: "authenticate.dev-snglr.com"
+    #   response:
+    #     add:
+    #       x-forwarded-proto: "https"
+    #       x-forwarded-for: "authenticate.dev-snglr.com"
