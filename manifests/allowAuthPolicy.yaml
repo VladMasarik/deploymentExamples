@@ -4,8 +4,10 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: allow-all
-  namespace: feature-add-authpolicy
+  namespace: istio-system
 spec:
   action: ALLOW
   rules:
-  - {}
+  - to:
+    - operation:
+        hosts: ["health.dev-app.snglr.com"]

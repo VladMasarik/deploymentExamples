@@ -2,22 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: health
-  namespace: feature-add-authpolicy
-  # annotations:
-    # alb.ingress.kubernetes.io/healthcheck-port: "80"
-    # alb.ingress.kubernetes.io/healthcheck-path: /
-    # alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
-    # external-dns.alpha.kubernetes.io/ttl: "60"
-    # external-dns.alpha.kubernetes.io/aws-health-check-id: 458260ba-be72-463c-9621-ec5157b90ec7
-    # external-dns.alpha.kubernetes.io/hostname: health.dev-app.snglr.com
-    # external-dns.alpha.kubernetes.io/alias: "true"
-    # external-dns.alpha.kubernetes.io/aws-failover: PRIMARY
-    # external-dns.alpha.kubernetes.io/set-identifier: main
-    # external-dns.alpha.kubernetes.io/aws-evaluate-target-health: "true"
-    # external-dns.alpha.kubernetes.io/aws-failover: PRIMARY
-    # external-dns.alpha.kubernetes.io/aws-health-check-id: 458260ba-be72-463c-9621-ec5157b90ec7
-    # external-dns.alpha.kubernetes.io/hostname: health.dev-app.snglr.com
-    # external-dns.alpha.kubernetes.io/set-identifier: main
+  namespace: deleteme
 spec:
   # type: NodePort
   ports:
@@ -38,7 +23,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: health
-  namespace: feature-add-authpolicy
+  namespace: deleteme
 spec:
   selector:
     matchLabels:
@@ -54,34 +39,3 @@ spec:
         ports:
           - containerPort: 8080
         image: vladmasarik/ser
-
-# ---
-
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: health
-#   annotations:
-#     external-dns.alpha.kubernetes.io/aws-evaluate-target-health: "true"
-#     external-dns.alpha.kubernetes.io/aws-health-check-id: 458260ba-be72-463c-9621-ec5157b90ec7
-#     external-dns.alpha.kubernetes.io/hostname: qualifier-backup-web-dev.dev-app.snglr.com
-#     external-dns.alpha.kubernetes.io/aws-failover: PRIMARY
-#     external-dns.alpha.kubernetes.io/set-identifier: main
-#     external-dns.alpha.kubernetes.io/alias: "true"
-#     kubernetes.io/ingress.class: alb
-#     alb.ingress.kubernetes.io/scheme: internet-facing
-#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-# spec:
-#   rules:
-#     - host: qualifier-backup-web-dev.dev-app.snglr.com
-#       http:
-#         paths:
-#           - path: /*
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: health
-#                 port:
-#                   number: 8080
-
-
