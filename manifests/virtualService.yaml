@@ -4,7 +4,7 @@ apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: health
-  namespace: feature-add-authpolicy
+  namespace: deleteme
 spec:
   hosts:
   - health.dev-app.snglr.com
@@ -15,7 +15,7 @@ spec:
     - destination:
         host: health
         port:
-          number: 8080
+          number: 80
     # headers:
     #   request:
     #     add:

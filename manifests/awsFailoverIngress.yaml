@@ -9,7 +9,7 @@ metadata:
     external-dns.alpha.kubernetes.io/aws-health-check-id: 458260ba-be72-463c-9621-ec5157b90ec7
     external-dns.alpha.kubernetes.io/aws-failover: PRIMARY
     external-dns.alpha.kubernetes.io/set-identifier: main
-    external-dns.alpha.kubernetes.io/aws-evaluate-target-health: "true"
+    external-dns.alpha.kubernetes.io/aws-evaluate-target-health: "false" # Dear god, dont forget that this stuff, can be used to redirect failover as well, as the defined health check
     external-dns.alpha.kubernetes.io/hostname: health.dev-app.snglr.com
 spec:
   rules:

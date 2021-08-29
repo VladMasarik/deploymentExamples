@@ -8,6 +8,23 @@ metadata:
 spec:
   action: ALLOW
   rules:
-  - to:
+  - from: # Allow all that have JWT
+    - source:
+        requestPrincipals: ["*"]
+  - to: # allow all for GET requests
+    - operation:
+        methods: [GET]
+  - to: # Allow all to this host
     - operation:
         hosts: ["health.dev-app.snglr.com"]
+  - to: # allow all to path /info...; that have "resource_access" fields in the JWT; and have specific audience
+    - operation:
+        paths:
+          - /info*
+    when:
+      - key: 'request.auth.claims[resource_access][deleteme4][roles]'
+        values:
+          - deleteme-role
+      - key: request.auth.audiences
+        values:
+          - snglr-model-checker-web # this is needed because otherwise we will see only audience "account" and that gets denied

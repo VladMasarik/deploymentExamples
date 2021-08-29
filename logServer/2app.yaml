@@ -2,9 +2,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: health
-  namespace: deleteme
+  namespace: istio-system
 spec:
-  # type: NodePort
+  type: NodePort
   ports:
   - targetPort: 8080
     port: 80
@@ -23,7 +23,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: health
-  namespace: deleteme
+  namespace: istio-system
   labels: 
     app.kubernetes.io/instance: health
     app.kubernetes.io/name: health
@@ -47,3 +47,25 @@ spec:
           - containerPort: 8080
         image: vladmasarik/ser
         # image: chentex/random-logger
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-np
+  namespace: istio-system
+  # labels:
+  #   app: istio-ingressgateway
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+    - targetPort: 8080
+      port: 8080
+      name: http2
+  selector:
+    app: istio-ingressgateway
+    istio: ingressgateway
+  type: NodePort
