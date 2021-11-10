@@ -6,11 +6,15 @@ These policies can be appended to users on creation of token. You cannot change 
 vault token create -period="30m" -policy="web cluster autoscaler"
 ```
 
+Just don't forget the `/data/` part in the secret name!
 ```
-path "secret/web-cluster-autoscaler" {
+path "secret/data/web-cluster/cluster-autoscaler" {
   capabilities = [] # Empty means, allow everything
 }
 ```
+
+# AWS storage
+Don't forget to add the delete permissions to the bucket, otherwise you will not be able to delete the data from the Vault
 
 # Tokens
 Each token outside of tokens created with `-period` flag have a maximum TTL. Meaning they will eventually stop being valid, and you cannot renew them.
@@ -37,3 +41,11 @@ You can add in secrets and read them. You have to define path to the secret, and
 vault kv put mysecretpath/mysecret mykey="myvalue"
 vault kv get mysecretpath/mysecret
 ```
+
+# Users auth
+```
+vault auth enable userpass
+vault write auth/userpass/users/myuser password=12345 policies="mypolicy1,mypolicy2"
+vault login -method=userpass username=myuser password=12345
+```
+
