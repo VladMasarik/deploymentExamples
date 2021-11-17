@@ -14,3 +14,6 @@ You can integrate stuff with slack.
 - everythng should start working
 - you can add new alarm > select your notification system > be sure to test whether the alarms work as intended
 https://hooks.slack.com/services/TNSDLC9C2/B02G3TTEY/n7572Kaek3oCP80Jsdaar5
+
+## Datasources
+Make sure Prometheus source has the correct Promehteus port, and `http://` prefix set as well; Otherwise the connection will fail or the alarms with be incorrect.
