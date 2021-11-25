@@ -1,0 +1,134 @@
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: deleteme
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: health
+  namespace: deleteme
+spec:
+  # type: NodePort
+  ports:
+  - targetPort: 8080
+    port: 80
+    name: http
+  - targetPort: 8080
+    port: 8080
+    name: http2
+  selector:
+    app: health
+
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health
+  namespace: deleteme
+  labels: 
+    app.kubernetes.io/instance: health
+    app.kubernetes.io/name: health
+spec:
+  selector:
+    matchLabels:
+      app: health
+      app.kubernetes.io/instance: health
+      app.kubernetes.io/name: health
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: health
+        app.kubernetes.io/instance: health
+        app.kubernetes.io/name: health
+    spec:
+      # terminationGracePeriodSeconds: 60
+      containers:
+      - name: health
+        # resources:
+        #   limits:
+        #     cpu: 500m
+        ports:
+          - containerPort: 8080
+        image: vladmasarik/ser
+        # image: chentex/random-logger
+        # lifecycle:
+        #   preStop:
+        #     exec:
+        #       command:
+        #       - sleep
+        #       - "60"
+
+---
+# allows skipping auth
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: my-app-exclude
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      app: istio-ingressgateway # selector for the istio gateway pod
+  configPatches:
+  - applyTo: HTTP_ROUTE
+    match:
+      routeConfiguration:
+        vhost:
+          name: demo.dev-app.snglr.com:80 # your host; !!! Needs the port definition as well!!!
+          # route:
+          #  name: /public # use this code snippet to exclude URL paths from authentication
+          # although, dont forget to exclude it in the authorizationPolicy as well. For that though
+          # there is a good documentation on Istio website
+    patch:
+      operation: MERGE
+      value:
+        name: envoy.ext_authz_disabled
+        typed_per_filter_config:
+          envoy.ext_authz:
+            "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
+            disabled: true
+
+---
+# Defines routing when hitting istio
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app
+  namespace: deleteme
+spec:
+  hosts:
+  - demo.dev-app.snglr.com
+  gateways:
+  - default/qualifier-gateway
+  http:
+  - route:
+    - destination:
+        host: health
+        port:
+          number: 80
+
+---
+
+# Defines whether to use the authorization for the path
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: my-app-exclude
+  namespace: istio-system
+spec:
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        hosts: ["demo.dev-app.snglr.com"]
+  selector:
+    matchLabels:
+      app: istio-ingressgateway

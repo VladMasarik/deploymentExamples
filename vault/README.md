@@ -49,3 +49,14 @@ vault write auth/userpass/users/myuser password=12345 policies="mypolicy1,mypoli
 vault login -method=userpass username=myuser password=12345
 ```
 
+vault write auth/userpass/users/bitbucket-pipeline password=qqqq policies="web-cluster-read,conductor-cluster-read"
+
+vault login -method=userpass username=bitbucket-pipeline password=qqqq
+
+path "secret/web-cluster/*" {
+  capabilities = ["read"]
+}
+
+path "secret/conductor-cluster/*" {
+  capabilities = ["read"]
+}

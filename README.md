@@ -5,6 +5,10 @@ NS="your namespace"
 kubectl api-resources --verbs=list --namespaced -o name   | xargs -n 1 kubectl get --show-kind --ignore-not-found -n $NS
 ```
 
+Change EKS cluster
+```
+aws eks --region eu-central-1 update-kubeconfig --name snglr-tf-k8s-conductor-dev --profile dev
+```
 
 
 # Grafana
