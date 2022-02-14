@@ -1,0 +1,25 @@
+
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: my-app-exclude
+  namespace: istio-system
+spec:
+  action: ALLOW
+  rules:    
+    - to:
+      - operation:
+          hosts:
+            - health.dev-app.snglr.com
+          paths:
+            - /swagger/*
+      when:
+        - key: request.auth.audiences
+          values:
+            - snglr-model-checker-web
+        - key: 'request.auth.claims[resource_access][snglr-intern][roles]'
+          values:
+            - snglr-intern
+  selector:
+    matchLabels:
+      app: istio-ingressgateway

@@ -1,0 +1,28 @@
+
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: my-app-exclude
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      app: istio-ingressgateway # selector for the istio gateway pod
+  configPatches:
+  - applyTo: HTTP_ROUTE
+    match:
+      routeConfiguration:
+        vhost:
+          name: demo.dev-app.snglr.com:80 # your host; !!! Needs the port definition as well!!!
+          # route:
+          #  name: /public # use this code snippet to exclude URL paths from authentication
+          # although, dont forget to exclude it in the authorizationPolicy as well. For that though
+          # there is a good documentation on Istio website
+    patch:
+      operation: MERGE
+      value:
+        name: envoy.ext_authz_disabled
+        typed_per_filter_config:
+          envoy.ext_authz:
+            "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
+            disabled: true

@@ -1,0 +1,18 @@
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app
+  namespace: deleteme
+spec:
+  hosts:
+  - health.dev-app.snglr.com
+  gateways:
+  - default/qualifier-gateway
+  http:
+  - route:
+    - destination:
+        host: health
+        port:
+          number: 80
+
