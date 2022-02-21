@@ -1,0 +1,18 @@
+# This verifies the validity of the JWT token. It doesn *not*, however, verify that a JWT token
+# is present. That is the task of the AuthorizationPolicy in conjunction with the EnvoyFilter.
+
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
+  jwtRules:
+    - issuer: 'https://xxxx.dev-app.snglr.com/auth/realms/snglr-model-checker'
+      jwksUri: https://xxxx.dev-app.snglr.com/auth/realms/snglr-model-checker/protocol/openid-connect/certs
+    forwardOriginalToken: true
+    fromHeaders:
+     - name: "x-auth-request-access-token"

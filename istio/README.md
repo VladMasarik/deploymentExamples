@@ -8,6 +8,11 @@ Set Envoy logging level
 ```
 istioctl pc log --level "jwt:info,http:info,rbac:info" -n istio-system istio-ingressgateway-5d6878f698-vhstf
 ```
+More detailed log areas
+```
+"jwt:debug,http:debug,rbac:debug,admin:debug,client:debug,config:debug,connection:debug,conn_handler:debug,envoy_bug:debug,ext_authz:debug,filter:debug,main:debug,redis:debug,router:debug,runtime:debug,stats:debug,secret:debug,tracing:debug,upstream:debug,udp:debug"
+```
+
 
 Extra
 ```
@@ -28,4 +33,4 @@ Helps you disable / enable the filters done within istio / per every envoy sidec
 Defines who should your apps authenticate with, eg. where to send the authentication requests
 
 ## Auth policy
-How the authentication is supposed to work, eg. the rules of how to execute the authentication
+How the authentication is supposed to work, eg. the rules of how to execute the authentication, what to check, and for which URLs.
