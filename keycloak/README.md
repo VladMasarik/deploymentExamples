@@ -60,5 +60,30 @@ curl 'https://authenticate.dev-app.snglr.com/auth/realms/<<your realm>>/protocol
 
 Extra args for importing at the keycloak initialization
 ```
--Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/import/import.json -Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.migration.strategy=IGNORE_EXISTING
+/opt/jboss/keycloak/bin/standalone.sh -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/import/import.json -Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.migration.strategy=IGNORE_EXISTING
+```
+
+# User setup
+```
+# Located in /opt/jboss/keycloak???
+./kcadm.sh config credentials --server http://localhost:8080/auth --realm master --user admin --password 5axxxx2432
+./kcadm.sh create realms -s realm=deleteme1214sada
+```
+
+# Custom scripts
+```
+/opt/jboss/startup-scripts/my-script.cli
+```
+
+# Logging
+```
+/subsystem=logging/logger=org.keycloak:add
+/subsystem=logging/logger=org.keycloak:write-attribute(name=level,value=${env.KEYCLOAK_LOGLEVEL:INFO})
+
+/subsystem=logging/root-logger=ROOT:change-root-log-level(level=${env.ROOT_LOGLEVEL:INFO})
+
+/subsystem=logging/root-logger=ROOT:remove-handler(name="FILE")
+/subsystem=logging/periodic-rotating-file-handler=FILE:remove
+
+/subsystem=logging/console-handler=CONSOLE:undefine-attribute(name=level)
 ```
