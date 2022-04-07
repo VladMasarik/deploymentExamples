@@ -31,7 +31,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: health
-  namespace: deleteme
+  namespace: kube-system
   labels: 
     app.kubernetes.io/instance: health
     app.kubernetes.io/name: health
@@ -49,9 +49,15 @@ spec:
         app.kubernetes.io/instance: health
         app.kubernetes.io/name: health
     spec:
+      serviceAccountName: eks-admin
       containers:
       - name: health
         ports:
           - containerPort: 8080
-        image: vladmasarik/ser
+        # image: vladmasarik/ser
         # image: chentex/random-logger
+        # image: alpine/k8s:1.21.2
+        image: python:3.10
+        command:
+        - "sleep"
+        - "10000"

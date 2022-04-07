@@ -8,3 +8,6 @@ curl -X POST http://conductor.dev-app.snglr.com/trigger-model-check --data '{
 "workflowVersion": "model-check-wf"
 }'
 
+curl -X POST http://conductor.dev-app.snglr.com/trigger-model-check --data '{
+"param-one": "444"
+}'

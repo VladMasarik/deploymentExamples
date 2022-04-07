@@ -1,0 +1,4 @@
+`EventBus` is the middle connecting layer
+YOu have `EventSource` which is like an input, ie. defines the URL which you can trigger. Once that is triggered, a `Sensor` is watching multiple `EventSources` and one all of the conditions / dependencies are fulfilled, it will send message to a `Trigger`. The `Trigger` than actually defines what happens once the sencor actually has all of the conditions fulfilled.
+
+You then have `X Controller` pods, which are basically just an implementation of the Kubernetes objects. BUT for some reason each Sensor and EventSource creates its own pod, which contains the logs as well.

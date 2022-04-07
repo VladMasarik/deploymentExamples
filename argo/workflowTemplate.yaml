@@ -1,0 +1,58 @@
+# argo submit -n argo example.yaml -p 'param-one="abcd"' --watch
+
+
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: deleteme
+  namespace: argo
+spec:
+  entrypoint: main-temp
+  arguments:
+    parameters:
+    - name: parm-one
+  templates:
+    - name: main-temp
+      steps:
+      - - name: memory
+          template: print
+          arguments:
+            parameters:
+            - name: input-one
+              value: "{{workflow.parameters.parm-one}}"
+      - - name: print-it
+          template: print-two
+          arguments:
+            parameters:
+            - name: input-one
+              value: "{{steps.memory.outputs.parameters.output-one}}"
+    - name: print
+      inputs:
+        parameters:
+          - name: input-one
+      outputs:
+        parameters:
+          - name: output-one
+            valueFrom:
+              path: /qqq.txt
+      script:
+        image: alpine
+        command: [/bin/sh]
+        source: |
+            echo "{{inputs.parameters.input-one}}"
+            echo "2Gi" > /qqq.txt
+    - name: print-two
+      inputs:
+        parameters:
+          - name: input-one
+      outputs:
+        parameters:
+          - name: output-one
+            valueFrom:
+              path: /qqq.txt
+      script:
+        image: alpine
+        command: [/bin/sh]
+        source: |
+            echo "{{inputs.parameters.input-one}}"
+            echo "2Gi" > /qqq.txt

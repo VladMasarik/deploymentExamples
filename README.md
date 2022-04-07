@@ -10,6 +10,22 @@ Change EKS cluster
 aws eks --region eu-central-1 update-kubeconfig --name snglr-tf-k8s-conductor-dev --profile dev
 ```
 
+# Building docker images
+Clean up temp files/cache
+```
+rm -rf /tmp/helm-*
+pip3 cache purge
+apk add --update --no-cache
+```
+
+# RBAC
+## Cluster Role
+A list of allowed actions / permissions
+
+## Service Account
+
+## ClusterRoleBinding
+Connect / link between ClusterRole and a ServiceAccount. Or in general link between a user and their permissions, ie. grant user X permissions Z.
 
 # Grafana
 - I suggest copying stuff from other dashboards.
