@@ -46,3 +46,11 @@ Instant > True
 Transform > Outer join
 Transform > Organize fields
 Override > bits (SI)
+
+# Debugging
+
+apt install dnsutils
+nslookup / dig  
+
+istiod.istio-system.svc
+nslookup health.deleteme.svc.cluster.local

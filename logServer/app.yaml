@@ -1,16 +1,9 @@
 
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: deleteme
-
----
-
-apiVersion: v1
 kind: Service
 metadata:
   name: health
-  namespace: deleteme
+  namespace: kube-system
 spec:
   # type: NodePort
   ports:
@@ -32,7 +25,7 @@ kind: Deployment
 metadata:
   name: health
   namespace: kube-system
-  labels: 
+  labels:
     app.kubernetes.io/instance: health
     app.kubernetes.io/name: health
 spec:
@@ -49,9 +42,46 @@ spec:
         app.kubernetes.io/instance: health
         app.kubernetes.io/name: health
     spec:
-      serviceAccountName: eks-admin
+      # serviceAccountName: eks-admin
       containers:
       - name: health
+        ports:
+          - containerPort: 8080
+        # image: vladmasarik/ser
+        # image: chentex/random-logger
+        # image: alpine/k8s:1.21.2
+        image: python:3.10
+        command:
+        - "sleep"
+        - "10000"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health2
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/instance: health2
+    app.kubernetes.io/name: health2
+spec:
+  selector:
+    matchLabels:
+      app: health2
+      app.kubernetes.io/instance: health2
+      app.kubernetes.io/name: health2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: health2
+        app.kubernetes.io/instance: health2
+        app.kubernetes.io/name: health2
+    spec:
+      # serviceAccountName: eks-admin
+      containers:
+      - name: health2
         ports:
           - containerPort: 8080
         # image: vladmasarik/ser
