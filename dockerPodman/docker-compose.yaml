@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  database:
+    image: docker.io/postgres:14
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: mysecretpassword
+    volumes:
+      - './.postgres:/var/lib/postgresql/data'
+    networks:
+      - mylocalnet
+
+  babel:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file: ./.env
+    volumes:
+      - ./:/app
+    command: bash -c "yarn install && yarn dev"
+    ports:
+    - 3000:3000
+    - 7007:7007
+    depends_on:
+      - database
+    networks:
+      - mylocalnet
+
+networks:
+  mylocalnet: {}

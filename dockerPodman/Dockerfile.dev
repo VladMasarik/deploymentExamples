@@ -1,0 +1,10 @@
+FROM node:16-bullseye-slim
+
+# Install techdoc building dependencies
+RUN apt update \
+    && apt install -y python3 python3-pip git graphviz plantuml \
+    && pip install mkdocs mkdocs-techdocs-core cookiecutter
+
+WORKDIR /app
+
+CMD ["yarn", "dev"]
